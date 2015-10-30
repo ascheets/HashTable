@@ -1,0 +1,15 @@
+#include <iostream>
+#include <string>
+#include "HashTable.h"
+
+using namespace std;
+
+int main()
+{
+    cout << "HashTable main function" << endl;
+    
+    HashTable <int> test;
+
+    return 0;
+
+}

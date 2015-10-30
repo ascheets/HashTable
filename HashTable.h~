@@ -1,0 +1,33 @@
+#pragma once
+#include <iostream>
+#include "HashTableExceptions.h"
+
+using namespace std;
+
+template <class T>
+class HashTable
+{
+ public:
+    HashTable();
+    ~HashTable();
+
+
+ private:
+
+};
+
+//ctor
+template <class T>
+HashTable <T> :: HashTable()
+{
+
+
+}
+
+//dtor
+template <class T>
+HashTable <T> :: ~HashTable()
+{
+
+
+}
