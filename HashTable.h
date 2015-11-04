@@ -32,7 +32,6 @@ class HashTable
     int hash(const string& k);
     
     SafeArray < LinkedList <KeyValuePair <T>* > > table;
-    SafeArray <KeyValuePair <T>*> allKVPs;
 
 };
 
@@ -40,7 +39,6 @@ class HashTable
 template <class T>
 HashTable <T> :: HashTable() : table(101)
 {
-
 
 }
 
@@ -61,12 +59,19 @@ void HashTable <T> :: insert(const string& k, const T& v)
 
     //hash the key
     int index = hash(k);
-    //add the kvp to the list of kvps
-    allKVPs.push_back(p_kvp);
 
-    //insert into the table
-    table[index].insert(p_kvp);
+    //is the kvp already in the table?
+    if(find(k)){
+	//HashTableException error;
+	//throw error;
 
+	cout << "Ugly exception here, kvp with this key is already in table" << endl;
+    }
+    else{
+	//insert into the table
+	table[index].insert(p_kvp);
+
+    }
 }
 
 //remove
@@ -111,8 +116,8 @@ bool HashTable <T> :: remove(const string& k)
 			cout << "Element has key of interest" << endl;
 			//remove element at this position in list
 			table[index].remove(count);
-			//remove kvp from list of kvps
-			allKVPs.removeElement(val);
+
+
 			//switch retVal
 			retVal = true;
 		    }
@@ -130,8 +135,7 @@ bool HashTable <T> :: remove(const string& k)
 				cout << "Element has key of interest" << endl;
 				//remove element at this position
 				table[index].remove(count);
-				//remove kvp from list of kvps
-				allKVPs.removeElement(val);
+
 				//switch retVal
 				retVal = true;
 				//break to start loop over correctly
@@ -165,18 +169,15 @@ bool HashTable <T> :: find(const string& k)
     //find index of list in array
     int index = hash(k);
 
-    //create dummy T, actual value...
-    //doesn't matter, just whether there...
-    //or not
-    T dummy;
+    //search through linked list at hash(k)
+    for(int i = 0; i < table[index].size(); i++){
 
-    //create variable for LinkedList:find()
-    KeyValuePair <T>* kvp = new KeyValuePair <T> (k, dummy);
+	//does the linked list have a kvp with key k?
+	if(table[index].at(i)->getKey() == k){
+	    retVal = true;
+	}	
 
-    //is it in the list?
-    retVal = table[index].find(kvp);
-
-    delete kvp;
+    }
 
     return retVal;
 }
@@ -186,40 +187,54 @@ template <class T>
 T& HashTable <T> :: retrieve(const string& k)
 {
 
+    if(!(find(k))){
+	cout << "Obnoxious Exception thrown here" << endl;
+    }
+    else{
+	//find index of list in array
+	int index = hash(k);
 
+	//search through linked list at hash(k)
+	for(int i = 0; i < table[index].size(); i++){
+	    //if kvp we are looking for?
+	    if(table[index].at(i)->getKey() == k){
+		return table[index].at(i)->getValue();
+	    }
+	}	
+    }
 }
 
 //getKeys
 template <class T>
 void HashTable <T> :: getKeys(SafeArray <string>& aK)
 {
-    for(int i = 0; i < allKVPs.size(); i++){
+    for(int i = 0; i < table.size(); i++){
 	
-	aK.push_back(allKVPs[i]->getKey());
+	//if the list at position i isn't empty
+	if(!(table[i].isEmpty())){
 
+	    //for each element in the list
+	    for(int j = 0; j < table[i].size(); j++){
+		
+		aK.push_back(table[i].at(j)->getKey());
+
+	    }
+	}
     }
+    
 }
 
 //getValues
 template <class T>
 void HashTable <T> :: getValues(SafeArray <T>& aV)
 {
-    for(int i = 0; i < allKVPs.size(); i++){
 
-	aV.push_back(allKVPs[i]->getValue());
-
-    }
 }
 
 //print
 template <class T>
 void HashTable <T> :: print()
 {
-    for(int i = 0; i < allKVPs.size(); i++){
-
-	cout << allKVPs[i]->getKey() << " " << allKVPs[i]->getValue() << endl;
-
-    }    
 
 }
 
@@ -227,8 +242,9 @@ void HashTable <T> :: print()
 template <class T>
 int HashTable <T> :: hash(const string& k)
 {
-    unsigned int hashVal = 0;
     int index;
+
+    unsigned int hashVal = 0;
 
     for(int i = 0; i < k.size(); i++){
 		

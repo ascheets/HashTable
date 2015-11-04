@@ -16,7 +16,7 @@ class KeyValuePair
     string primary();
 
     string getKey();
-    T getValue();
+    T& getValue();
 
  private:
     //string acting as key
@@ -65,7 +65,7 @@ string KeyValuePair <T> :: getKey()
 
 //getValue
 template <class T>
-T KeyValuePair <T> :: getValue()
+T& KeyValuePair <T> :: getValue()
 {
     return value;
 }

@@ -11,6 +11,14 @@ class HashTableNullLinkedListException: public exception
 
 };
 
+class HashTableException: public exception
+{
+    virtual const char* what() const throw(){
+	return "HashTableException thrown";
+    }
+
+};
+
 /*
 
 class HashTable***Exception: public exception
