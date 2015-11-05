@@ -3,6 +3,14 @@
 
 using namespace std;
 
+class HashTableInvalidSizeException: public exception
+{
+    virtual const char* what() const throw(){
+	return "HashTableInvalidSizeException thrown";
+    }
+
+};
+
 class HashTableNullLinkedListException: public exception
 {
     virtual const char* what() const throw(){

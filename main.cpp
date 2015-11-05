@@ -12,16 +12,28 @@ int main()
     cout << "HashTable main function" << endl;
     
     HashTable <int> * test = new HashTable <int>;
+    HashTable <int> test2;
+
+    cout << test->isEmpty() << endl;
 
     test->insert("test1", 1);
-    test->insert("test1", 2);
-    test->insert("test1", 3);
-    test->insert("test2", 2);
-    test->insert("test3", 3);
+    //test->insert("test1", 2);
+    //test->insert("test1", 3);
+    test->insert("Test2", 2);
+    test->insert("Best3", 3);
 
-    test->retrieve("test1");
-    //test->retrieve("test2");
-    //test->retreive("test3");
+    test2.insert("testing1", 1);
+    test2.insert("testing2", 2);
+    test2.insert("testing3", 3);
+
+    int test1 = (*test)["test1"];
+    cout << "test1 : " << test1 << endl;
+    int testing2 = test2["testing2"];
+    cout << "test2 : " << testing2 << endl;
+    int test3 = test->retrieve("Best3");
+    cout << "test3 : " << test3 << endl;
+
+    cout << test->isEmpty() << endl;
 
     test->remove("test1");
     test->print();
@@ -34,6 +46,8 @@ int main()
 
     //test->remove("test2");
     //test->remove("test3");
+
+    test->printCollisionInfo();
 
     delete test;
 
@@ -52,9 +66,11 @@ void testGetters(HashTable <int>* test)
     test->getKeys(keys);
     //getValues
     test->getValues(values);
-    
+
+    cout << "Printing getKeys() result" << endl;
     keys.print();
-    //values.print();
+    cout << "Printing getValues() result" << endl;
+    values.print();
 
 
 }
