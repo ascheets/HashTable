@@ -1,0 +1,1358 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 18 36 594 756
+%%Title: Enscript Output
+%%Creator: GNU Enscript 1.6.5.90
+%%CreationDate: Fri Nov  6 15:30:20 2015
+%%Orientation: Portrait
+%%Pages: (atend)
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6.5 90
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6.5 90
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 10 10 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [612 792] 
+  >> setpagedevice
+} if
+%%BeginResource: procset Enscript-Header-simple 1.6.5 90
+
+/do_header {	% print default simple header
+  gsave
+    d_header_x d_header_y HFpt_h 3 div add translate
+
+    HF setfont
+    user_header_p {
+      5 0 moveto user_header_left_str show
+
+      d_header_w user_header_center_str stringwidth pop sub 2 div
+      0 moveto user_header_center_str show
+
+      d_header_w user_header_right_str stringwidth pop sub 5 sub
+      0 moveto user_header_right_str show
+    } {
+      5 0 moveto fname show
+      45 0 rmoveto fmodstr show
+      45 0 rmoveto pagenumstr show
+    } ifelse
+
+  grestore
+} def
+%%EndResource
+/d_page_w 576 def
+/d_page_h 720 def
+/d_header_x 0 def
+/d_header_y 705 def
+/d_header_w 576 def
+/d_header_h 15 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 576 def
+/d_footer_h 0 def
+/d_output_w 576 def
+/d_output_h 705 def
+/cols 1 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 1 def
+/fname (HashTable.h) def
+/fdir (.) def
+/ftail (HashTable.h) def
+% User defined strings:
+/fmodstr (Fri Nov 06 14:10:33 2015) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 692 M
+(#pragma once) s
+5 681 M
+(#include <iostream>) s
+5 670 M
+(#include "KeyValuePair.h") s
+5 659 M
+(#include "HashTableExceptions.h") s
+5 648 M
+(#include "LinkedList/LinkedList.h") s
+5 637 M
+(#include "SafeArray/SafeArray.h") s
+5 626 M
+(#include <cmath>) s
+5 604 M
+(using namespace std;) s
+5 582 M
+(template <class T>) s
+5 571 M
+(class HashTable) s
+5 560 M
+({) s
+5 549 M
+( public:) s
+5 538 M
+(    HashTable\(\);) s
+5 527 M
+(    ~HashTable\(\);) s
+5 505 M
+(    void insert\(const string& k, const T& v\);) s
+5 483 M
+(    bool remove\(const string& k\);) s
+5 461 M
+(    bool find\(const string& k\);) s
+5 439 M
+(    T& retrieve\(const string& k\);) s
+5 417 M
+(    void getKeys\(SafeArray <string>& allKeys\);) s
+5 395 M
+(    void getValues\(SafeArray <T>& allValues\);) s
+5 373 M
+(    void print\(\);) s
+5 351 M
+(    void printCollisionInfo\(\);) s
+5 329 M
+(    T& operator [] \(string key\);) s
+5 307 M
+(    bool isEmpty\(\);) s
+5 285 M
+( private:) s
+5 274 M
+(    int hash\(const string& k\);) s
+5 252 M
+(    int rehash\(int newSize, const string& k\);) s
+5 241 M
+(    ) s
+5 230 M
+(    bool isPrime\(int num\);) s
+5 208 M
+(    int findPrime\(int num\);) s
+5 186 M
+(    void resize\(\);) s
+5 164 M
+(    SafeArray < LinkedList <KeyValuePair <T>* > > * table;) s
+5 142 M
+(    int numElements;) s
+5 120 M
+(};) s
+5 98 M
+(//ctor) s
+5 87 M
+(template <class T>) s
+5 76 M
+(HashTable <T> :: HashTable\(\)) s
+5 65 M
+({) s
+5 54 M
+(    //initialize table with size 101) s
+5 43 M
+(    table = new SafeArray < LinkedList <KeyValuePair <T>* > > \(101\);) s
+5 21 M
+(    numElements = 0;) s
+5 10 M
+(}) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 2 def
+/fname (HashTable.h) def
+/fdir (.) def
+/ftail (HashTable.h) def
+% User defined strings:
+/fmodstr (Fri Nov 06 14:10:33 2015) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 681 M
+(//dtor) s
+5 670 M
+(template <class T>) s
+5 659 M
+(HashTable <T> :: ~HashTable\(\)) s
+5 648 M
+({) s
+5 637 M
+(    //delete all of the kvps we have allocated and stored in linked list) s
+5 626 M
+(    for\(int i = 0; i < table->cap\(\); i++\){) s
+5 604 M
+(        if\(!\(\(*table\)[i].isEmpty\(\)\)\){) s
+5 593 M
+(            ) s
+5 582 M
+(            for\(int j = 0; j < \(*table\)[i].size\(\); j++\){) s
+5 560 M
+(                delete \(*table\)[i][j];) s
+5 549 M
+(            }) s
+5 538 M
+(        }) s
+5 527 M
+(    }) s
+5 505 M
+(    delete table;) s
+5 494 M
+(}) s
+5 472 M
+(//insert) s
+5 461 M
+(template <class T>) s
+5 450 M
+(void HashTable <T> :: insert\(const string& k, const T& v\)) s
+5 439 M
+({) s
+5 428 M
+(    //hash the key) s
+5 417 M
+(    int index = hash\(k\);) s
+5 395 M
+(    //is the kvp already in the table?) s
+5 384 M
+(    if\(find\(k\)\){) s
+5 373 M
+(        //HashTableException error;) s
+5 362 M
+(        //throw error;) s
+5 340 M
+(        cout << "Ugly exception here, kvp with this key is already in table" << endl;) s
+5 329 M
+(    }) s
+5 318 M
+(    else{) s
+5 307 M
+(        //create a new KeyValuePair on the heap) s
+5 296 M
+(        KeyValuePair <T>* p_kvp = new KeyValuePair <T> \(k,v\);) s
+5 285 M
+(        ) s
+5 274 M
+(        //insert into the table) s
+5 263 M
+(        \(*table\)[index].insert\(p_kvp\);) s
+5 241 M
+(        numElements++;) s
+5 230 M
+(    }) s
+5 208 M
+(    if\(numElements > \(int\) \(\(\(double\)table->cap\(\)\)*0.9\)\){) s
+5 197 M
+(        //print collision info) s
+5 186 M
+(        printCollisionInfo\(\);) s
+5 175 M
+(        //resize the table) s
+5 164 M
+(        resize\(\);) s
+5 153 M
+(        //print collision info) s
+5 142 M
+(        printCollisionInfo\(\);) s
+5 131 M
+(    }) s
+5 120 M
+(}) s
+5 98 M
+(//remove) s
+5 87 M
+(template <class T>) s
+5 76 M
+(bool HashTable <T> :: remove\(const string& k\)) s
+5 65 M
+({) s
+5 54 M
+(    bool retVal = false;) s
+5 32 M
+(    //hash the key) s
+5 21 M
+(    int index = hash\(k\);) s
+_R
+S
+%%Page: (3) 3
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 3 def
+/fname (HashTable.h) def
+/fdir (.) def
+/ftail (HashTable.h) def
+% User defined strings:
+/fmodstr (Fri Nov 06 14:10:33 2015) def
+/pagenumstr (3) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 692 M
+(    //is linked list at index empty?) s
+5 681 M
+(    if\(\(\(*table\)[index]\).isEmpty\(\)\){) s
+5 670 M
+(        HashTableNullLinkedListException error;) s
+5 659 M
+(        throw error;) s
+5 648 M
+(    }) s
+5 637 M
+(    //there is a linked list at the index) s
+5 626 M
+(    else{) s
+5 604 M
+(        //helper kvp object) s
+5 593 M
+(        KeyValuePair <T> * val;) s
+5 571 M
+(        \(*table\)[index].print\(\);) s
+5 549 M
+(        bool justRemovedItem = true;) s
+5 527 M
+(        while\(justRemovedItem\){) s
+5 516 M
+(            //position in linked list) s
+5 505 M
+(            int count = 0;) s
+5 494 M
+(            ) s
+5 483 M
+(            //go through list, keeping track of position) s
+5 472 M
+(            //LinkedList.remove takes in a position) s
+5 450 M
+(            if\(!\(\(*table\)[index].isEmpty\(\)\)\){) s
+5 439 M
+(                //if the list is not empty) s
+5 428 M
+(                if\(\(*table\)[index].first\(val\)\){) s
+5 417 M
+(                    ) s
+5 406 M
+(                    cout << val->getValue\(\) << endl;) s
+5 395 M
+(                ) s
+5 384 M
+(                    //if the first element was of interest) s
+5 373 M
+(                    if\(val->getKey\(\) == k\){) s
+5 362 M
+(                        cout << "Element has key of interest" << endl;) s
+5 351 M
+(                        //remove element at this position in list) s
+5 340 M
+(                        \(*table\)[index].remove\(count\);) s
+5 307 M
+(                        //switch retVal) s
+5 296 M
+(                        retVal = true;) s
+5 285 M
+(                    }) s
+5 274 M
+(                    //continue to see if any of...) s
+5 263 M
+(                    //next elements are of interest) s
+5 252 M
+(                    else{) s
+5 241 M
+(                        //checking next elements) s
+5 230 M
+(                        while\(\(*table\)[index].next\(val\)\){) s
+5 219 M
+(                            //we are at next position in list...) s
+5 208 M
+(                            count++;) s
+5 197 M
+(                            cout << val->getValue\(\) << endl;) s
+5 186 M
+(                            ) s
+5 175 M
+(                            //if the element at count is of interest) s
+5 164 M
+(                            if\(val->getKey\(\) == k\){) s
+5 153 M
+(                                cout << "Element has key of interest" << endl;) s
+5 142 M
+(                                //remove element at this position) s
+5 131 M
+(                                \(*table\)[index].remove\(count\);) s
+5 109 M
+(                                //switch retVal) s
+5 98 M
+(                                retVal = true;) s
+5 87 M
+(                                //break to start loop over correctly) s
+5 76 M
+(                                break;) s
+5 65 M
+(                            }) s
+5 43 M
+(                            //if we have gone through entire list without already breaking...) s
+5 32 M
+(                            if\(count == \(*table\)[index].size\(\) - 1\){) s
+5 21 M
+(                                justRemovedItem = false;) s
+5 10 M
+(                            }                                       ) s
+_R
+S
+%%Page: (4) 4
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 4 def
+/fname (HashTable.h) def
+/fdir (.) def
+/ftail (HashTable.h) def
+% User defined strings:
+/fmodstr (Fri Nov 06 14:10:33 2015) def
+/pagenumstr (4) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 692 M
+(                        }) s
+5 681 M
+(                    }) s
+5 670 M
+(                }) s
+5 659 M
+(            }) s
+5 648 M
+(            else{) s
+5 637 M
+(                justRemovedItem = false;) s
+5 626 M
+(            }) s
+5 615 M
+(        }) s
+5 604 M
+(    }) s
+5 582 M
+(    return retVal;) s
+5 560 M
+(}) s
+5 538 M
+(//find) s
+5 527 M
+(template <class T>) s
+5 516 M
+(bool HashTable <T> :: find\(const string& k\)) s
+5 505 M
+({) s
+5 494 M
+(    bool retVal = false;) s
+5 472 M
+(    //find index of list in array) s
+5 461 M
+(    int index = hash\(k\);) s
+5 439 M
+(    //search through linked list at hash\(k\)) s
+5 428 M
+(    for\(int i = 0; i < \(*table\)[index].size\(\); i++\){) s
+5 406 M
+(        //does the linked list have a kvp with key k?) s
+5 395 M
+(        if\(\(*table\)[index].at\(i\)->getKey\(\) == k\){) s
+5 384 M
+(            retVal = true;) s
+5 373 M
+(        }       ) s
+5 351 M
+(    }) s
+5 329 M
+(    return retVal;) s
+5 318 M
+(}) s
+5 296 M
+(//retrieve) s
+5 285 M
+(template <class T>) s
+5 274 M
+(T& HashTable <T> :: retrieve\(const string& k\)) s
+5 263 M
+({) s
+5 252 M
+(    if\(!\(find\(k\)\)\){) s
+5 241 M
+(        cout << "Obnoxious Exception thrown here" << endl;) s
+5 230 M
+(    }) s
+5 219 M
+(    else{) s
+5 208 M
+(        //find index of list in array) s
+5 197 M
+(        int index = hash\(k\);) s
+5 175 M
+(        //search through linked list at hash\(k\)) s
+5 164 M
+(        for\(int i = 0; i < \(*table\)[index].size\(\); i++\){) s
+5 153 M
+(            //if kvp we are looking for?) s
+5 142 M
+(            if\(\(*table\)[index].at\(i\)->getKey\(\) == k\){) s
+5 131 M
+(                return \(*table\)[index].at\(i\)->getValue\(\);) s
+5 120 M
+(            }) s
+5 109 M
+(        }       ) s
+5 98 M
+(    }) s
+5 76 M
+(}) s
+5 54 M
+(//getKeys) s
+5 43 M
+(template <class T>) s
+5 32 M
+(void HashTable <T> :: getKeys\(SafeArray <string>& aK\)) s
+5 21 M
+({) s
+5 10 M
+(    for\(int i = 0; i < table->cap\(\); i++\){) s
+_R
+S
+%%Page: (5) 5
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 5 def
+/fname (HashTable.h) def
+/fdir (.) def
+/ftail (HashTable.h) def
+% User defined strings:
+/fmodstr (Fri Nov 06 14:10:33 2015) def
+/pagenumstr (5) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 692 M
+(        ) s
+5 681 M
+(        //if the list at position i isn't empty) s
+5 670 M
+(        if\(!\(\(*table\)[i].isEmpty\(\)\)\){) s
+5 648 M
+(            //for each element in the list) s
+5 637 M
+(            for\(int j = 0; j < \(*table\)[i].size\(\); j++\){) s
+5 626 M
+(                ) s
+5 615 M
+(                aK.push_back\(\(*table\)[i].at\(j\)->getKey\(\)\);) s
+5 593 M
+(            }) s
+5 582 M
+(        }) s
+5 571 M
+(    }) s
+5 560 M
+(    ) s
+5 549 M
+(}) s
+5 527 M
+(//getValues) s
+5 516 M
+(template <class T>) s
+5 505 M
+(void HashTable <T> :: getValues\(SafeArray <T>& aV\)) s
+5 494 M
+({) s
+5 483 M
+(    for\(int i = 0; i < table->cap\(\); i++\){) s
+5 472 M
+(        ) s
+5 461 M
+(        //if the list at position i isn't empty) s
+5 450 M
+(        if\(!\(\(*table\)[i].isEmpty\(\)\)\){) s
+5 428 M
+(            //for each element in the list) s
+5 417 M
+(            for\(int j = 0; j < \(*table\)[i].size\(\); j++\){) s
+5 406 M
+(                ) s
+5 395 M
+(                aV.push_back\(\(*table\)[i].at\(j\)->getValue\(\)\);) s
+5 373 M
+(            }) s
+5 362 M
+(        }) s
+5 351 M
+(    }) s
+5 340 M
+(}) s
+5 318 M
+(//operator []) s
+5 307 M
+(template <class T>) s
+5 296 M
+(T& HashTable <T> :: operator [] \(string key\)) s
+5 285 M
+({) s
+5 274 M
+(    return retrieve\(key\);) s
+5 263 M
+(}) s
+5 241 M
+(//print) s
+5 230 M
+(template <class T>) s
+5 219 M
+(void HashTable <T> :: print\(\)) s
+5 208 M
+({) s
+5 197 M
+(    for\(int i = 0; i < table->cap\(\); i++\){) s
+5 186 M
+(        ) s
+5 175 M
+(        if\(!\(\(*table\)[i].isEmpty\(\)\)\){) s
+5 153 M
+(            for\(int j = 0; j < \(*table\)[i].size\(\); j++\){) s
+5 131 M
+(                cout << \(*table\)[i][j]->getKey\(\) << " ::: " << \(*table\)[i][j]->getValue\(\) << e) s
+5 120 M
+(ndl;) s
+5 98 M
+(            }) s
+5 87 M
+(        }) s
+5 76 M
+(    }) s
+5 65 M
+(}) s
+5 43 M
+(//printCollisionInfo) s
+5 32 M
+(template <class T>) s
+5 21 M
+(void HashTable <T> :: printCollisionInfo\(\)) s
+5 10 M
+({) s
+_R
+S
+%%Page: (6) 6
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 6 def
+/fname (HashTable.h) def
+/fdir (.) def
+/ftail (HashTable.h) def
+% User defined strings:
+/fmodstr (Fri Nov 06 14:10:33 2015) def
+/pagenumstr (6) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 692 M
+(    int runningTotal = 0;) s
+5 681 M
+(    int averageSize;) s
+5 670 M
+(    int longest = 0;) s
+5 659 M
+(    int numWith = 0;) s
+5 648 M
+(    int numEmpty = 0;) s
+5 626 M
+(    for\(int i = 0; i < table->cap\(\); i++\){) s
+5 615 M
+(        ) s
+5 604 M
+(        if\(!\(\(*table\)[i].isEmpty\(\)\)\){) s
+5 593 M
+(            ) s
+5 582 M
+(            runningTotal = runningTotal + \(*table\)[i].size\(\);) s
+5 571 M
+(            numWith++;) s
+5 549 M
+(            if\(\(*table\)[i].size\(\) > longest\){) s
+5 538 M
+(                ) s
+5 527 M
+(                longest = \(*table\)[i].size\(\);) s
+5 505 M
+(            }) s
+5 494 M
+(        }) s
+5 483 M
+(        else{) s
+5 472 M
+(            numEmpty++;) s
+5 461 M
+(        }) s
+5 450 M
+(    }) s
+5 428 M
+(    averageSize = runningTotal/numWith;) s
+5 406 M
+(    cout << "Average length of non-empty lists: " << averageSize << endl) s
+5 395 M
+(         << "Size of longest list: " << longest << endl) s
+5 384 M
+(         << "Number of empty lists: " << numEmpty << endl << endl;) s
+5 373 M
+(        ) s
+5 351 M
+(}) s
+5 329 M
+(//isEmpty) s
+5 318 M
+(template <class T>) s
+5 307 M
+(bool HashTable <T> :: isEmpty\(\)) s
+5 296 M
+({) s
+5 285 M
+(    return \(numElements == 0\);) s
+5 274 M
+(}) s
+5 252 M
+(//hash) s
+5 241 M
+(template <class T>) s
+5 230 M
+(int HashTable <T> :: hash\(const string& k\)) s
+5 219 M
+({) s
+5 208 M
+(    int index;) s
+5 186 M
+(    unsigned int hashVal = 0;) s
+5 164 M
+(    for\(int i = 0; i < k.size\(\); i++\){) s
+5 153 M
+(                ) s
+5 142 M
+(        //find the hash value before mod) s
+5 131 M
+(        hashVal = \(hashVal + \(int\) k.at\(i\)\)*33;) s
+5 109 M
+(    }) s
+5 87 M
+(    //mod hash value by current size of table) s
+5 76 M
+(    index = hashVal % table->cap\(\);) s
+5 54 M
+(    return index;) s
+5 32 M
+(}) s
+5 10 M
+(//rehash) s
+_R
+S
+%%Page: (7) 7
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 7 def
+/fname (HashTable.h) def
+/fdir (.) def
+/ftail (HashTable.h) def
+% User defined strings:
+/fmodstr (Fri Nov 06 14:10:33 2015) def
+/pagenumstr (7) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 692 M
+(template <class T>) s
+5 681 M
+(int HashTable <T> :: rehash\(int newSize, const string& k\)) s
+5 670 M
+({) s
+5 659 M
+(    int index;) s
+5 637 M
+(    unsigned int hashVal = 0;) s
+5 615 M
+(    for\(int i = 0; i < k.size\(\); i++\){) s
+5 604 M
+(                ) s
+5 593 M
+(        //find the hash value before mod) s
+5 582 M
+(        hashVal = \(hashVal + \(int\) k.at\(i\)\)*33;) s
+5 560 M
+(    }) s
+5 538 M
+(    //mod hash value by current size of table) s
+5 527 M
+(    index = hashVal % newSize;) s
+5 505 M
+(    return index;) s
+5 483 M
+(}) s
+5 461 M
+(//isPrime) s
+5 450 M
+(template <class T>) s
+5 439 M
+(bool HashTable <T> :: isPrime\(int num\)) s
+5 428 M
+({) s
+5 417 M
+(    bool retVal = true;) s
+5 395 M
+(    double numDouble = \(double\) num;) s
+5 384 M
+(    double root = sqrt\(numDouble\);) s
+5 373 M
+(    int intRoot = \(int\) root;) s
+5 351 M
+(    for\(int i = 2; i < intRoot; i++\){) s
+5 340 M
+(        ) s
+5 329 M
+(        if\(\(num % i\) == 0\){) s
+5 318 M
+(            retVal = false;) s
+5 307 M
+(            break;) s
+5 296 M
+(        }) s
+5 285 M
+(    }) s
+5 274 M
+( ) s
+5 263 M
+(    return retVal;) s
+5 252 M
+(}) s
+5 230 M
+(//findPrime) s
+5 219 M
+(template <class T>) s
+5 208 M
+(int HashTable <T> :: findPrime\(int num\)) s
+5 197 M
+({) s
+5 186 M
+(    bool notPrime = true;) s
+5 164 M
+(    while\(notPrime\){) s
+5 142 M
+(        if\(isPrime\(num\)\){) s
+5 131 M
+(            notPrime = false;) s
+5 120 M
+(        }) s
+5 109 M
+(        else) s
+5 98 M
+(            num++;) s
+5 87 M
+(    }) s
+5 65 M
+(    return num;) s
+5 43 M
+(}) s
+5 21 M
+(//resize) s
+5 10 M
+(template <class T>) s
+_R
+S
+%%Page: (8) 8
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 8 def
+/fname (HashTable.h) def
+/fdir (.) def
+/ftail (HashTable.h) def
+% User defined strings:
+/fmodstr (Fri Nov 06 14:10:33 2015) def
+/pagenumstr (8) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 692 M
+(void HashTable <T> :: resize\(\)) s
+5 681 M
+({) s
+5 670 M
+(    //first find new size) s
+5 659 M
+(    int newSize = findPrime\(2*\(table->cap\(\)\)\);) s
+5 637 M
+(    //make sure the newSize is prime) s
+5 626 M
+(    if\(!\(isPrime\(newSize\)\)\){) s
+5 615 M
+(        HashTableInvalidSizeException error;) s
+5 604 M
+(        throw error;    ) s
+5 593 M
+(    }) s
+5 582 M
+(    ) s
+5 571 M
+(    //temp pointer) s
+5 560 M
+(    SafeArray < LinkedList <KeyValuePair <T>* > > * p_tableTemp;) s
+5 538 M
+(    //otherwise, initialize new table-type with size newSize) s
+5 527 M
+(    p_tableTemp = new SafeArray < LinkedList <KeyValuePair <T>* > > \(newSize\);) s
+5 516 M
+(    ) s
+5 505 M
+(    //need to transfer old data into new table container) s
+5 494 M
+(    for\(int i = 0; i < table->cap\(\); i++\){) s
+5 483 M
+(        ) s
+5 472 M
+(        if\(!\(\(*table\)[i].isEmpty\(\)\)\){) s
+5 461 M
+(            ) s
+5 450 M
+(            for\(int j = 0; j < \(*table\)[i].size\(\); j++\){) s
+5 428 M
+(                KeyValuePair <T> * p_kvpTemp = \(*table\)[i][j];) s
+5 406 M
+(                //get key of this kvp, rehash it ) s
+5 395 M
+(                int newIndex = rehash\(newSize, p_kvpTemp->getKey\(\)\);) s
+5 384 M
+(                ) s
+5 373 M
+(                //insert kvp into new table at index) s
+5 362 M
+(                \(*p_tableTemp\)[newIndex].insert\(p_kvpTemp\);) s
+5 351 M
+(                ) s
+5 340 M
+(            }) s
+5 329 M
+(        }) s
+5 318 M
+(    }) s
+5 296 M
+(    //now make sure table pointer points to new table) s
+5 285 M
+(    SafeArray < LinkedList <KeyValuePair <T>* > > * p_toDelete;) s
+5 263 M
+(    p_toDelete = table;) s
+5 241 M
+(    table = p_tableTemp;) s
+5 219 M
+(    delete p_toDelete;) s
+5 197 M
+(    p_toDelete = 0;) s
+5 186 M
+(    p_tableTemp = 0;) s
+5 153 M
+(}) s
+_R
+S
+%%Trailer
+%%Pages: 8
+%%DocumentNeededResources: font Courier-Bold Courier 
+%%EOF

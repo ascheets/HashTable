@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <fstream>
 #include "KeyValuePair.h"
 #include "HashTableExceptions.h"
 #include "LinkedList/LinkedList.h"
@@ -28,6 +29,8 @@ class HashTable
     void getValues(SafeArray <T>& allValues);
 
     void print();
+
+    void printToFile(string file);
 
     void printCollisionInfo();
 
@@ -106,8 +109,12 @@ void HashTable <T> :: insert(const string& k, const T& v)
     }
 
     if(numElements > (int) (((double)table->cap())*0.9)){
+	//print collision info
+	printCollisionInfo();
 	//resize the table
 	resize();
+	//print collision info
+	printCollisionInfo();
     }
 }
 
@@ -133,9 +140,9 @@ bool HashTable <T> :: remove(const string& k)
 
 	(*table)[index].print();
 
-	bool justRemovedItem = true;
+	bool keepSearching = true;
 
-	while(justRemovedItem){
+	while(keepSearching){
 	    //position in linked list
 	    int count = 0;
 	    
@@ -154,9 +161,10 @@ bool HashTable <T> :: remove(const string& k)
 			//remove element at this position in list
 			(*table)[index].remove(count);
 
-
 			//switch retVal
 			retVal = true;
+			keepSearching = false;
+			break;
 		    }
 		    //continue to see if any of...
 		    //next elements are of interest
@@ -181,14 +189,14 @@ bool HashTable <T> :: remove(const string& k)
 
 			    //if we have gone through entire list without already breaking...
 			    if(count == (*table)[index].size() - 1){
-				justRemovedItem = false;
+				keepSearching = false;
 			    }			    		    
 			}
 		    }
 		}
 	    }
 	    else{
-		justRemovedItem = false;
+		keepSearching = false;
 	    }
 	}
     }
@@ -223,7 +231,6 @@ bool HashTable <T> :: find(const string& k)
 template <class T>
 T& HashTable <T> :: retrieve(const string& k)
 {
-
     if(!(find(k))){
 	cout << "Obnoxious Exception thrown here" << endl;
     }
@@ -239,6 +246,7 @@ T& HashTable <T> :: retrieve(const string& k)
 	    }
 	}	
     }
+
 }
 
 //getKeys
@@ -304,6 +312,34 @@ void HashTable <T> :: print()
     }
 }
 
+//printToFile
+template <class T>
+void HashTable <T> :: printToFile(string file)
+{
+    ofstream outFile;
+    outFile.open(file.c_str());
+
+    if(outFile.fail()){
+	HashTableException error;
+	throw error;
+    }
+
+    for(int i = 0; i < table->cap(); i++){
+	
+	if(!((*table)[i].isEmpty())){
+
+	    for(int j = 0; j < (*table)[i].size(); j++){
+
+		outFile << (*table)[i][j]->getKey() << " ::: " << (*table)[i][j]->getValue() << endl;
+
+	    }
+	}
+    }
+
+    outFile.close();
+
+}
+
 //printCollisionInfo
 template <class T>
 void HashTable <T> :: printCollisionInfo()
@@ -336,7 +372,7 @@ void HashTable <T> :: printCollisionInfo()
 
     cout << "Average length of non-empty lists: " << averageSize << endl
 	 << "Size of longest list: " << longest << endl
-	 << "Number of empty lists: " << numEmpty << endl;
+	 << "Number of empty lists: " << numEmpty << endl << endl;
 	
 
 }
@@ -400,11 +436,13 @@ bool HashTable <T> :: isPrime(int num)
 
     double numDouble = (double) num;
     double root = sqrt(numDouble);
-    
-    for(int i = 0; i < ((int) root); i++){
+    int intRoot = (int) root;
+
+    for(int i = 2; i < intRoot; i++){
 	
-	if(num % i == 0){
+	if((num % i) == 0){
 	    retVal = false;
+	    break;
 	}
     }
  
